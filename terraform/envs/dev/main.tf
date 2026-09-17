@@ -10,7 +10,8 @@ module "lambda" {
 
 # Provision the API Gateway:
 module "api_gateway" {
-  source         = "../../modules/api_gateway"
-  project_prefix = var.project_prefix
-  aws_region     = var.aws_region
+  source              = "../../modules/api_gateway"
+  project_prefix      = var.project_prefix
+  aws_region          = var.aws_region
+  lambda_function_arn = module.lambda.lambda_function_arn
 }
