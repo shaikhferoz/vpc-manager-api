@@ -1,6 +1,5 @@
 """Validation helpers for API request bodies."""
 
-
 def validate_vpc_request(request_body):
     """Return an error message when a VPC request is invalid."""
     required_fields = ('name', 'cidr_block', 'subnets')

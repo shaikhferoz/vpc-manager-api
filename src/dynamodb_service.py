@@ -1,6 +1,9 @@
 """DynamoDB service for storing VPC details."""
 from datetime import datetime, timezone
+import logging
 import boto3
+
+logger = logging.getLogger(__name__)
 
 
 class DynamoDBService:
@@ -18,12 +21,13 @@ class DynamoDBService:
 			'subnet_ids': created_resources['subnet_ids'],
 			'created_at': datetime.now(timezone.utc).isoformat(),
 		}
-		print(f"Saving VPC details to DynamoDB: {item}")
+		logger.info(f"Saving VPC {item['id']} to DynamoDB")
 		response = self.table.put_item(Item=item)
-		print(f"DynamoDB put_item response: {response}")
+		logger.debug(f"DynamoDB put_item response: {response}")
 
 	def get_vpc(self, vpc_id):
 		"""Retrieve a VPC by its ID."""
+		logger.info(f"Retrieving VPC {vpc_id} from DynamoDB")
 		response = self.table.get_item(Key={'id': vpc_id})
-		print(f"Retrieved VPC details from DynamoDB: {response.get('Item')}")
+		logger.debug(f"Retrieved VPC details from DynamoDB: {response.get('Item')}")
 		return response.get('Item')
