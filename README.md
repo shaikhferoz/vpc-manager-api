@@ -17,4 +17,8 @@ This serverless api creates, retrieves AWS VPC components
 
 ### User Journey
 
-- TBD:
+- User signs into cognito to get a JWT token.
+- User calls the API gateway HTTP API using this token as a Authorization Bearer token.
+- API Gateway authenticates and authorizes the request by contacting AWS Cognito via the gateway authorizers.
+- Upon successful authentication, API Gateway invokes/triggers the lambda function.
+- Upon unsuccessful authentication, API Gateway never triggers the lambda function and returns a `401` unauthorized response.

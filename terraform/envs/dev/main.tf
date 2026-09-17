@@ -10,10 +10,12 @@ module "lambda" {
 
 # Provision the API Gateway:
 module "api_gateway" {
-  source              = "../../modules/api_gateway"
-  project_prefix      = var.project_prefix
-  aws_region          = var.aws_region
-  lambda_function_arn = module.lambda.lambda_function_arn
+  source                = "../../modules/api_gateway"
+  project_prefix        = var.project_prefix
+  aws_region            = var.aws_region
+  lambda_function_arn   = module.lambda.lambda_function_arn
+  cognito_app_client_id = module.cognito.app_client_id
+  cognito_issuer_url    = module.cognito.issuer_url
 }
 
 # Provision the Cognito User Pool and App Client:
