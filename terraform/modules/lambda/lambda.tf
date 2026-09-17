@@ -35,6 +35,7 @@ resource "aws_iam_role_policy" "lambda_iam_policy" {
     ]
   })
 }
+
 # Zip the lambda function code:
 data "archive_file" "lambda_zip" {
   type        = "zip"
@@ -51,5 +52,6 @@ resource "aws_lambda_function" "lambda_function" {
 
   # Path to the deployment package (ZIP file)
   filename         = data.archive_file.lambda_zip.output_path
+  # Check the SHA256 for code changes to rebuild the zip:
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 }
