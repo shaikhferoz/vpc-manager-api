@@ -33,7 +33,7 @@ aws s3api put-public-access-block \
   BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
 ```
 
-### How to provision infrasture
+### How to provision infrastructure
 
 ```bash
 # After configuring AWS CLI credentials in your dev profile, export it:
