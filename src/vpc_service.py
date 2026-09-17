@@ -1,5 +1,8 @@
 """EC2 VPC Service module for managing VPCs and related resources."""
+import logging
 import boto3
+
+logger = logging.getLogger(__name__)
 
 class VPCService:
     """Service class for managing VPCs and related resources."""
@@ -19,7 +22,7 @@ class VPCService:
                 }
             ],
         )
-        print(f"Created VPC with ID: {response['Vpc']['VpcId']}")
+        logger.info(f"Created VPC with ID: {response['Vpc']['VpcId']}")
         vpc_id = response['Vpc']['VpcId']
         return vpc_id
 
@@ -37,7 +40,7 @@ class VPCService:
             ],
         )
         subnet_id = response['Subnet']['SubnetId']
-        print(f"Created Subnet with ID: {subnet_id} in VPC: {vpc_id}")
+        logger.info(f"Created subnet {subnet_id} in VPC {vpc_id}")
         return subnet_id
 
     def create_vpc_with_subnet(self, name, cidr_block, subnets):
@@ -56,5 +59,5 @@ class VPCService:
             'vpc_id': vpc_id,
             'subnet_ids': subnet_ids,
         }
-        print(f"Created VPC and Subnets: {created_resources}")
+        logger.info(f"Created VPC and {len(subnet_ids)} subnets")
         return created_resources
