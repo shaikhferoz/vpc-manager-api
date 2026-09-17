@@ -41,6 +41,11 @@ resource "aws_iam_role_policy" "lambda_iam_policy" {
         Effect   = "Allow"
         Resource = "*"
       },
+      {
+        Action   = ["dynamodb:PutItem"]
+        Effect   = "Allow"
+        Resource = var.dynamodb_table_arn
+      },
     ]
   })
 }
@@ -58,6 +63,12 @@ resource "aws_lambda_function" "lambda_function" {
   role          = aws_iam_role.lambda_execution_role.arn
   handler       = "app.lambda_handler"
   runtime       = "python3.12"
+
+  environment {
+    variables = {
+      DYNAMODB_TABLE_NAME = var.dynamodb_table_name
+    }
+  }
 
   # Path to the deployment package (ZIP file)
   filename = data.archive_file.lambda_zip.output_path

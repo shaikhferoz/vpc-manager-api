@@ -2,10 +2,12 @@
 
 # Provision the lambda function:
 module "lambda" {
-  source         = "../../modules/lambda"
-  project_prefix = var.project_prefix
-  aws_region     = var.aws_region
-  source_dir     = "${path.module}/../../../src"
+  source              = "../../modules/lambda"
+  project_prefix      = var.project_prefix
+  aws_region          = var.aws_region
+  source_dir          = "${path.module}/../../../src"
+  dynamodb_table_name = module.dynamodb.table_name
+  dynamodb_table_arn  = module.dynamodb.table_arn
 }
 
 # Provision the API Gateway:
