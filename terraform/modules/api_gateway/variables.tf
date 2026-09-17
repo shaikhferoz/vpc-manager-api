@@ -9,3 +9,8 @@ variable "project_prefix" {
   type        = string
   default     = "vpc-manager"
 }
+
+variable "lambda_function_arn" {
+  description = "The ARN of the Lambda function to integrate with the API Gateway."
+  type        = string
+}
