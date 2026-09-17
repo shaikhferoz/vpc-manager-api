@@ -3,6 +3,7 @@ import json
 import os
 
 from dynamodb_service import DynamoDBService
+from request_validator import validate_vpc_request
 from vpc_service import VPCService
 
 # Create an instance of the VPCService to manage VPCs and subnets:
@@ -31,15 +32,7 @@ def lambda_handler(event, context):
     """
     http_method = event.get('requestContext', {}).get('http', {}).get('method')
     if http_method == 'GET':
-        vpc_id = event.get('pathParameters', {}).get('vpc_id')
-
-        if not vpc_id:
-            return {
-                "statusCode": 400,
-                "headers": {"Content-Type": "application/json"},
-                "body": json.dumps({"error": "Expected path /vpcs/{vpc_id}"}),
-            }
-
+        vpc_id = event['pathParameters']['vpc_id']
         vpc = dynamodb_service.get_vpc(vpc_id)
 
         if not vpc:
@@ -57,7 +50,14 @@ def lambda_handler(event, context):
 
     request_body = json.loads(event.get("body") or "{}")
 
-    # TBD: Add some validators on the request body:
+    # Validate the incoming request body for creating a VPC and its subnets:
+    validation_error = validate_vpc_request(request_body)
+    if validation_error:
+        return {
+            "statusCode": 400,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({"error": validation_error}),
+        }
 
     # Create the VPC and its subnets using the VPCService:
     created_resources = vpc_service.create_vpc_with_subnet(
