@@ -3,4 +3,5 @@ module "lambda" {
   source         = "../../modules/lambda"
   project_prefix = var.project_prefix
   aws_region     = var.aws_region
+  source_dir     = "${path.module}/../../../src"
 }

@@ -9,3 +9,8 @@ variable "project_prefix" {
   type        = string
   default     = "vpc-manager"
 }
+
+variable "source_dir" {
+  description = "The source directory for the Lambda function code"
+  type        = string
+}

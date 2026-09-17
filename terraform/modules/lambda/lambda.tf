@@ -30,8 +30,26 @@ resource "aws_iam_role_policy" "lambda_iam_policy" {
           "logs:PutLogEvents"
         ]
         Effect   = "Allow"
-        Resource = "arn:aws:logs:*:*:*"
+        Resource = "arn:aws:logs:*:*:log-group:/aws/lambda/${var.project_prefix}-function:*"
       },
     ]
   })
+}
+# Zip the lambda function code:
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  source_dir  = var.source_dir
+  output_path = "${path.root}/build/lambda.zip"
+}
+
+# Lambda function resource:
+resource "aws_lambda_function" "lambda_function" {
+  function_name = "${var.project_prefix}-function"
+  role          = aws_iam_role.lambda_execution_role.arn
+  handler       = "app.lambda_handler"
+  runtime       = "python3.12"
+
+  # Path to the deployment package (ZIP file)
+  filename         = data.archive_file.lambda_zip.output_path
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 }
