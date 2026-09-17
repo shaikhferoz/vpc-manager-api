@@ -32,6 +32,15 @@ resource "aws_iam_role_policy" "lambda_iam_policy" {
         Effect   = "Allow"
         Resource = "arn:aws:logs:*:*:log-group:/aws/lambda/${var.project_prefix}-function:*"
       },
+      {
+        Action = [
+          "ec2:CreateVpc",
+          "ec2:CreateSubnet",
+          "ec2:CreateTags"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
     ]
   })
 }
@@ -51,7 +60,7 @@ resource "aws_lambda_function" "lambda_function" {
   runtime       = "python3.12"
 
   # Path to the deployment package (ZIP file)
-  filename         = data.archive_file.lambda_zip.output_path
+  filename = data.archive_file.lambda_zip.output_path
   # Check the SHA256 for code changes to rebuild the zip:
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 }
