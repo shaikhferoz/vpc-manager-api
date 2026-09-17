@@ -1,7 +1,15 @@
-### How to import this child module
+### What does this TF module do ?
+
+- This module provisions AWS lambda function with the following resources:
+  - AWS lambda function.
+  - AWS lambda IAM execution role.
+  - AWS IAM policy.
+
+
+### How to import this child module ?
 
 ```bash
-# In your parent/caller module, import the current directory as below.
+# In your parent/caller module, import the module directory as below.
 
 module "lambda" {
   source = "../../modules/lambda"
