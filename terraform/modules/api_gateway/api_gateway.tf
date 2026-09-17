@@ -20,10 +20,19 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
   payload_format_version = "2.0"
 }
 
-# Route for the API Gateway:
-resource "aws_apigatewayv2_route" "proxy" {
+# Route for creating a VPC:
+resource "aws_apigatewayv2_route" "create_vpc" {
   api_id             = aws_apigatewayv2_api.api.id
-  route_key          = "ANY /{proxy+}"
+  route_key          = "POST /vpcs"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito_authorizer.id
+}
+
+# Route for retrieving a VPC:
+resource "aws_apigatewayv2_route" "get_vpc" {
+  api_id             = aws_apigatewayv2_api.api.id
+  route_key          = "GET /vpcs/{vpc_id}"
   target             = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.cognito_authorizer.id

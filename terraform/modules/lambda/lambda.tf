@@ -42,7 +42,10 @@ resource "aws_iam_role_policy" "lambda_iam_policy" {
         Resource = "*"
       },
       {
-        Action   = ["dynamodb:PutItem"]
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem"
+        ]
         Effect   = "Allow"
         Resource = var.dynamodb_table_arn
       },

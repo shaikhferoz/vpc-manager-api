@@ -29,15 +29,44 @@ def lambda_handler(event, context):
         ]
     }
     """
+    http_method = event.get('requestContext', {}).get('http', {}).get('method')
+    if http_method == 'GET':
+        vpc_id = event.get('pathParameters', {}).get('vpc_id')
+
+        if not vpc_id:
+            return {
+                "statusCode": 400,
+                "headers": {"Content-Type": "application/json"},
+                "body": json.dumps({"error": "Expected path /vpcs/{vpc_id}"}),
+            }
+
+        vpc = dynamodb_service.get_vpc(vpc_id)
+
+        if not vpc:
+            return {
+                "statusCode": 404,
+                "headers": {"Content-Type": "application/json"},
+                "body": json.dumps({"error": "VPC not found"}),
+            }
+
+        return {
+            "statusCode": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps(vpc),
+        }
+
     request_body = json.loads(event.get("body") or "{}")
 
     # TBD: Add some validators on the request body:
 
+    # Create the VPC and its subnets using the VPCService:
     created_resources = vpc_service.create_vpc_with_subnet(
         request_body['name'],
         request_body['cidr_block'],
         request_body['subnets'],
     )
+
+    # Persist the created VPC and subnet details in DynamoDB using the DynamoDBService:
     dynamodb_service.save_vpc(
         request_body['name'],
         request_body['cidr_block'],

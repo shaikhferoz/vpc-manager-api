@@ -21,3 +21,9 @@ class DynamoDBService:
 		print(f"Saving VPC details to DynamoDB: {item}")
 		response = self.table.put_item(Item=item)
 		print(f"DynamoDB put_item response: {response}")
+
+	def get_vpc(self, vpc_id):
+		"""Retrieve a VPC by its ID."""
+		response = self.table.get_item(Key={'id': vpc_id})
+		print(f"Retrieved VPC details from DynamoDB: {response.get('Item')}")
+		return response.get('Item')
