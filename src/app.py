@@ -1,9 +1,13 @@
 """Lambda handler for the VPC Manager API."""
 import json
+import os
+
+from dynamodb_service import DynamoDBService
 from vpc_service import VPCService
 
 # Create an instance of the VPCService to manage VPCs and subnets:
 vpc_service = VPCService()
+dynamodb_service = DynamoDBService(os.environ['DYNAMODB_TABLE_NAME'])
 
 def lambda_handler(event, context):
     """Handle incoming requests to the VPC Manager API.
@@ -33,6 +37,11 @@ def lambda_handler(event, context):
         request_body['name'],
         request_body['cidr_block'],
         request_body['subnets'],
+    )
+    dynamodb_service.save_vpc(
+        request_body['name'],
+        request_body['cidr_block'],
+        created_resources,
     )
 
     # Build the API response with the created VPC and subnet IDs:
