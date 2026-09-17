@@ -1,5 +1,4 @@
 # The API Gateway HTTP API.
-# TBD: No authorizers yet, will add later.
 resource "aws_apigatewayv2_api" "api" {
   name          = "${var.project_prefix}-api"
   protocol_type = "HTTP"
@@ -26,7 +25,8 @@ resource "aws_apigatewayv2_route" "proxy" {
   api_id             = aws_apigatewayv2_api.api.id
   route_key          = "ANY /{proxy+}"
   target             = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
-  authorization_type = "NONE"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito_authorizer.id
 }
 
 # Allow API Gateway invoke the lambda function
@@ -36,4 +36,18 @@ resource "aws_lambda_permission" "apigw" {
   function_name = var.lambda_function_arn
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.api.execution_arn}/*/*"
+}
+
+# Bringing in Cognito authorizer - The auth layer integration with API GW:
+resource "aws_apigatewayv2_authorizer" "cognito_authorizer" {
+  api_id          = aws_apigatewayv2_api.api.id
+  name            = "${var.project_prefix}-cognito-authorizer"
+  authorizer_type = "JWT"
+
+  identity_sources = ["$request.header.Authorization"]
+
+  jwt_configuration {
+    issuer   = var.cognito_issuer_url
+    audience = [var.cognito_app_client_id]
+  }
 }
