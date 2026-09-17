@@ -24,3 +24,10 @@ module "cognito" {
   project_prefix = var.project_prefix
   aws_region     = var.aws_region
 }
+
+# Provision AWS DynamoDB table for storing VPC information:
+module "dynamodb" {
+  source         = "../../modules/dynamodb"
+  project_prefix = var.project_prefix
+  aws_region     = var.aws_region
+}
