@@ -131,3 +131,9 @@ Successful response: `200 OK`
 | `500` | An AWS operation failed while creating or retrieving the VPC. |
 
 Unsupported methods and paths are rejected by API Gateway and do not invoke Lambda.
+
+## Production Enhancement Proposal
+
+The current implementation creates the VPC and subnets before returning a response back to the caller. That is simple and works for a small request with 1 VPC and few subnets, but the client must wait while AWS creates these resources. In the future, the resources requested by the caller will grow and can include RouteTables, NACLs, TransitGateways etc. This will take more time and a synchronous tightly coupled design will not be the best fit.
+
+For a production API, we can accept the request quickly and let a background worker do the longer work. The proposed asynchronous design, includes a `202 Accepted` workflow, SQS buffering, worker Lambda processing, job status tracking, retries, and cleanup, is documented in [Asynchronous VPC Provisioning Proposal](docs/async-provisioning-architecture.md).
