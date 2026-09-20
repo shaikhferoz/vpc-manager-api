@@ -18,11 +18,27 @@ This serverless api creates, persists and retrieves AWS VPC and subnets focussin
 
 ### User Journey at a Glance
 
-- User signs into cognito to retrieve a JWT token.
+- User authenticates with AWS Cognito to retrieve a JWT token(Access Token).
 - User calls the API gateway HTTP API using this token as a Authorization Bearer token.
-- API Gateway authenticates and authorizes the request by contacting AWS Cognito via the gateway authorizers.
+- API Gateway authenticates and authorizes the request via the gateway authorizers configured.
 - Upon successful authentication, API Gateway invokes/triggers the lambda function.
 - Upon unsuccessful authentication, API Gateway never triggers the lambda function and returns a `401` unauthorized response.
+
+### How to deploy this solution ?
+
+```bash
+# Clone this repo:
+cd terraform/envs/dev
+
+# Read the docs here terraform/envs/dev to provision remote backend
+
+# Terraform provision:
+terraform init
+terraform plan
+terraform apply
+```
+
+---
 
 ## API Documentation
 
