@@ -2,11 +2,14 @@
 
 ## The Proposed Flow
 
-- We split our single lambda into 2 lambdas:
+- Asynchronous model by splitting our single lambda into 2 or more lambdas:
     - Request Lambda: This lambda registers the task of creation AWS resources in SQS and in DynamoDB.
     - Worker Lambda: This lambda reads from SQS Queue and provisions the infrastructure. It then writes the current status back to DynamoDB.
 - Introduce SQS Queue for decoupling the architecture.
-- We can even use AWS Step functions for implementing coordinated steps and custom retry/cleanup logic till the provisioning in complete.
+- Integrate AWS Step functions for implementing coordinated steps and custom retry/cleanup logic till the provisioning in complete.
+- Enhance code logic to include custom validations:
+    - Before creating resources, check whether the resource ID is already present in the DynamoDB.
+    - Validate if the request body contains the correct JSON schema.
 
 ```text
 Phase 1: Register the Task:
